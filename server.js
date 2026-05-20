@@ -9,12 +9,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Inicialização do Firebase Admin
-// Lê as credenciais do Firebase de uma variável de ambiente
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+// Padrão recomendado para Vercel/Serverless: verifica se já existe uma instância ativa
+if (!admin.apps.length) {
+    try {
+        if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+            throw new Error("Variável FIREBASE_SERVICE_ACCOUNT_KEY não configurada nas Environment Variables.");
+        }
+        
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+    } catch (error) {
+        console.error("Erro ao inicializar Firebase:", error.message);
+    }
+}
 
 const db = admin.firestore();
 const keysCollection = db.collection('generated_keys');
