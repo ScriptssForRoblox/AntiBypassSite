@@ -2,12 +2,21 @@ const express = require('express');
 const session = require('express-session');
 const crypto = require('crypto');
 const path = require('path');
+const admin = require('firebase-admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Armazenamento temporário de chaves válidas (em memória)
-const validKeys = new Set();
+// Inicialização do Firebase Admin
+// Certifique-se de baixar o JSON da sua conta de serviço no console do Firebase
+const serviceAccount = require("./firebase-key.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+const keysCollection = db.collection('generated_keys');
 
 // Configuração de Sessão (para saber se o usuário passou pelo index)
 app.use(session({
@@ -45,20 +54,71 @@ app.get('/api/generate-key', (req, res) => {
     // Gera uma key segura no SERVIDOR (impossível de prever)
     const secureKey = "REAL-KEY-" + crypto.randomBytes(6).toString('hex').toUpperCase();
     
-    // Salva a chave como válida para teste posterior
-    validKeys.add(secureKey);
+    // Salva a chave no Firebase com metadados
+    await keysCollection.doc(secureKey).set({
+        key: secureKey,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        expiresAt: Date.now() + (24 * 60 * 60 * 1000), // Expira em 24 horas
+        used: false,
+        ip: req.ip
+    });
     
     console.log('Sucesso: Key gerada ->', secureKey);
     res.json({ key: secureKey });
 });
 
 // Rota 3: Testar/Resgatar a key
-app.post('/api/redeem-key', (req, res) => {
+app.post('/api/redeem-key', async (req, res) => {
     const { key } = req.body;
-    if (validKeys.has(key)) {
-        return res.json({ success: true, message: 'Key válida! Acesso liberado.' });
-    } else {
-        return res.status(400).json({ success: false, message: 'Key inválida ou expirada.' });
+    
+    try {
+        const keyDoc = await keysCollection.doc(key).get();
+
+        if (keyDoc.exists) {
+            const data = keyDoc.data();
+            
+            if (!data.used && data.expiresAt > Date.now()) {
+                // Marca como usada para não poderem usar a mesma key várias vezes
+                await keysCollection.doc(key).update({ used: true, redeemedAt: admin.firestore.FieldValue.serverTimestamp() });
+                return res.json({ success: true, message: 'Key válida! Acesso liberado.' });
+            }
+        }
+        
+        return res.status(400).json({ success: false, message: 'Key inválida, já usada ou expirada.' });
+    } catch (error) {
+        console.error("Erro ao validar no Firebase:", error);
+        res.status(500).json({ success: false, message: 'Erro interno no servidor.' });
+    }
+});
+
+// Rota para a documentação da API
+app.get('/api-docs', (req, res) => {
+    res.sendFile(path.join(__dirname, 'api-docs.html'));
+});
+
+// Endpoint para Scripts Externos (Roblox / Discord Bot)
+app.post('/api/external/validate', async (req, res) => {
+    const { key } = req.body;
+    
+    if (!key) return res.status(400).json({ success: false, message: 'Chave não fornecida.' });
+
+    try {
+        const keyDoc = await keysCollection.doc(key).get();
+
+        if (keyDoc.exists) {
+            const data = keyDoc.data();
+            
+            // Verifica se a key não foi usada e se não expirou
+            if (!data.used && data.expiresAt > Date.now()) {
+                // OPCIONAL: Você pode marcar como 'used' aqui se quiser que a key seja de uso único
+                // await keysCollection.doc(key).update({ used: true }); 
+                return res.json({ success: true, message: 'Acesso autorizado!' });
+            }
+        }
+        
+        return res.status(403).json({ success: false, message: 'Chave inválida, expirada ou já utilizada.' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Erro interno na API.' });
     }
 });
 

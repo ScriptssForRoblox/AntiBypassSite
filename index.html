@@ -16,6 +16,7 @@
             <a href="#inicio">Início</a>
             <a href="#sobre">Sobre</a>
             <a href="#como-funciona">Como Funciona</a>
+            <a href="/api-docs" style="color: var(--primary-color); font-weight: bold;">API DOCS</a>
         </div>
     </nav>
 
@@ -26,7 +27,25 @@
             </div>
             <h1>Sistema de Validação</h1>
             <p>Clique para iniciar o processo de segurança e gerar sua chave de acesso única.</p>
-            <button onclick="startCheckpoint()"><i class="fas fa-bolt"></i> INICIAR VALIDAÇÃO</button>
+            <button id="startButton" onclick="startCheckpoint()"><i class="fas fa-bolt"></i> INICIAR VALIDAÇÃO</button>
+            
+            <!-- Detector de AdBlock (elemento isca) -->
+            <div id="adBlockDetector" class="ad-test"></div>
+            <!-- Mensagem de AdBlock -->
+            <div id="adBlockMessage" class="hidden error-message" style="margin-top: 20px;"></div>
+
+            <!-- Espaço para Anúncio (Banner) -->
+            <div class="ad-banner" style="margin-top: 25px;">
+                <span style="font-size: 10px; color: #444; display: block; margin-bottom: 5px;">ANÚNCIO</span>
+                <a href="https://seu-link-de-afiliado.com" target="_blank">
+                    <img src="https://via.placeholder.com/300x50/00aaff/ffffff?text=Clique+Aqui+e+Conheça+nossos+Scripts" alt="Anúncio" style="width: 100%; border-radius: 8px;">
+                </a>
+            </div>
+
+            <div id="startLoading" class="hidden" style="margin-top: 20px; color: var(--primary-color);">
+                <i class="fas fa-spinner fa-spin"></i> Carregando...
+            </div>
+            <div id="startError" class="hidden error-message" style="margin-top: 20px;"></div>
         </div>
 
         <!-- Seção de Teste de Key -->
