@@ -28,6 +28,16 @@
             <p>Clique para iniciar o processo de segurança e gerar sua chave de acesso única.</p>
             <button onclick="startCheckpoint()"><i class="fas fa-bolt"></i> INICIAR VALIDAÇÃO</button>
         </div>
+
+        <!-- Seção de Teste de Key -->
+        <div class="container" style="margin-top: 30px;">
+            <div class="logo-icon" style="font-size: 40px; color: var(--success-green);">
+                <i class="fas fa-unlock-keyhole"></i>
+            </div>
+            <h2>Testar Key</h2>
+            <input type="text" id="keyInput" placeholder="Cole sua key aqui..." class="key-input">
+            <button onclick="redeemKey()" style="background: var(--success-green); margin-top: 10px;"><i class="fas fa-check"></i> RESGATAR</button>
+        </div>
     </div>
 
     <section id="sobre">
