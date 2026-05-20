@@ -7,72 +7,80 @@
     <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/material-symbols:shield-lock-outline.svg?color=%2300aaff">
     <!-- Font Awesome para ícones modernos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #00aaff; /* Troque aqui para mudar a cor do site todo */
-            --bg-dark: #0a0a0c;
-            --card-bg: #16161e;
-        }
-        body { 
-            font-family: 'Inter', 'Segoe UI', sans-serif; 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; background: var(--bg-dark); color: white; margin: 0; 
-        }
-        .container { 
-            text-align: center; padding: 50px; background: var(--card-bg); 
-            border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); 
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            max-width: 400px;
-            width: 90%;
-        }
-        .logo-icon {
-            font-size: 60px;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.3));
-        }
-        h1 { color: white; font-size: 24px; margin-bottom: 10px; }
-        p { color: #888; font-size: 14px; line-height: 1.6; }
-        button { 
-            background: var(--primary-color); border: none; padding: 16px 32px; 
-            color: white; font-weight: 700; border-radius: 12px; 
-            cursor: pointer; font-size: 14px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            width: 100%; text-transform: uppercase; letter-spacing: 1.5px;
-            margin-top: 20px;
-        }
-        button:hover { 
-            background: #0088cc; 
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
-        }
-        .footer-note {
-            margin-top: 25px;
-            font-size: 11px;
-            color: #444;
-            text-transform: uppercase;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="logo-icon">
-            <i class="fas fa-shield-halved"></i>
+    <nav>
+        <div class="logo"><i class="fas fa-shield-bolt"></i> KEYGUARD</div>
+        <div class="links">
+            <a href="#inicio">Início</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#como-funciona">Como Funciona</a>
         </div>
-        <h1>Bem-vindo!</h1>
-        <p>Clique no botão abaixo para validar seu acesso e gerar sua key.</p>
-        <button onclick="startCheckpoint()"><i class="fas fa-check-circle"></i> VALIDAR ACESSO</button>
-        <div class="footer-note">Sistema de Proteção Anti-Bypass</div>
+    </nav>
+
+    <div class="hero" id="inicio">
+        <div class="container">
+            <div class="logo-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <h1>Sistema de Validação</h1>
+            <p>Clique para iniciar o processo de segurança e gerar sua chave de acesso única.</p>
+            <button onclick="startCheckpoint()"><i class="fas fa-bolt"></i> INICIAR VALIDAÇÃO</button>
+        </div>
     </div>
 
-    <script>
-        async function startCheckpoint() {
-            try {
-                await fetch('/api/start-checkpoint', { method: 'POST' });
-                window.location.href = "Untitled-1.html";
-            } catch (e) {
-                alert("Erro ao conectar com o servidor.");
-            }
-        }
-    </script>
+    <section id="sobre">
+        <div class="section-title">
+            <h2>Sobre o Sistema</h2>
+            <p>Segurança avançada para distribuição de chaves.</p>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <i class="fas fa-user-shield" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <h3>Anti-Bypass</h3>
+                <p>Nossa tecnologia impede que usuários pulem etapas de verificação, garantindo a integridade do processo.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-key" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <h3>Chaves Únicas</h3>
+                <p>Cada chave é gerada de forma aleatória e criptografada pelo nosso servidor central.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-microchip" style="font-size: 2rem; color: var(--primary-color);"></i>
+                <h3>Processamento</h3>
+                <p>Todo o cálculo é feito no backend, tornando impossível a manipulação via navegador.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="como-funciona" style="background: #0f0f13;">
+        <div class="section-title">
+            <h2>Como Funciona?</h2>
+        </div>
+        <div class="grid">
+            <div class="card">
+                <h1>01</h1>
+                <h3>Verificação</h3>
+                <p>O sistema registra seu início de sessão através de um checkpoint seguro.</p>
+            </div>
+            <div class="card">
+                <h1>02</h1>
+                <h3>Análise</h3>
+                <p>Validamos se você completou os requisitos necessários na página anterior.</p>
+            </div>
+            <div class="card">
+                <h1>03</h1>
+                <h3>Entrega</h3>
+                <p>Após a confirmação, sua chave é liberada para uso imediato.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 40px; color: #444; font-size: 12px; border-top: 1px solid #111;">
+        KEYGUARD PROTECTION SYSTEM &copy; 2024
+    </footer>
+
+    <script src="js/index.js"></script>
 </body>
 </html>
