@@ -1,5 +1,5 @@
 const express = require('express');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const crypto = require('crypto');
 const path = require('path');
 const admin = require('firebase-admin');
@@ -26,11 +26,10 @@ app.use(cors({
 }));
 
 // Configuração de Sessão (para saber se o usuário passou pelo index)
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'chave-padrao-desenvolvimento',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, maxAge: 600000 } // Sessão expira em 10 min
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSION_SECRET || 'chave-padrao-desenvolvimento'],
+    maxAge: 10 * 60 * 1000 // 10 minutos
 }));
 
 // Para aceitar JSON no corpo das requisições
