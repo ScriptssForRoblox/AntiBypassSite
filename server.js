@@ -3,13 +3,14 @@ const session = require('express-session');
 const crypto = require('crypto');
 const path = require('path');
 const admin = require('firebase-admin');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Inicialização do Firebase Admin
-// Certifique-se de baixar o JSON da sua conta de serviço no console do Firebase
-const serviceAccount = require("./firebase-key.json");
+// Lê as credenciais do Firebase de uma variável de ambiente
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -17,6 +18,12 @@ admin.initializeApp({
 
 const db = admin.firestore();
 const keysCollection = db.collection('generated_keys');
+
+// Configuração de CORS para aceitar seu site do GitHub
+app.use(cors({
+    origin: ['https://seu-usuario.github.io', 'http://localhost:3000'],
+    credentials: true
+}));
 
 // Configuração de Sessão (para saber se o usuário passou pelo index)
 app.use(session({
@@ -39,13 +46,13 @@ app.post('/api/start-checkpoint', (req, res) => {
 });
 
 // Rota 2: O gerador (Untitled-1.html) pede a key aqui
-app.get('/api/generate-key', (req, res) => {
+app.get('/api/generate-key', async (req, res) => {
     console.log('--- Requisição de Key Recebida ---');
     
     // SEGURANÇA: Verifica se o usuário realmente passou pelo checkpoint
     if (!req.session.passedCheckpoint) {
         console.log('ALERTA: Tentativa de Bypass detectada!');
-        return res.status(403).json({ error: 'Bypass detectado!' });
+        return res.status(403).json({ success: false, message: 'Bypass detectado!' });
     }
 
     // Limpa o checkpoint para que ele precise clicar de novo na próxima vez
@@ -54,17 +61,22 @@ app.get('/api/generate-key', (req, res) => {
     // Gera uma key segura no SERVIDOR (impossível de prever)
     const secureKey = "REAL-KEY-" + crypto.randomBytes(6).toString('hex').toUpperCase();
     
-    // Salva a chave no Firebase com metadados
-    await keysCollection.doc(secureKey).set({
-        key: secureKey,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000), // Expira em 24 horas
-        used: false,
-        ip: req.ip
-    });
-    
-    console.log('Sucesso: Key gerada ->', secureKey);
-    res.json({ key: secureKey });
+    try {
+        // Salva a chave no Firebase com metadados
+        await keysCollection.doc(secureKey).set({
+            key: secureKey,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            expiresAt: Date.now() + (24 * 60 * 60 * 1000), // Expira em 24 horas
+            used: false,
+            ip: req.ip
+        });
+        
+        console.log('Sucesso: Key gerada ->', secureKey);
+        res.json({ success: true, key: secureKey });
+    } catch (error) {
+        console.error("Erro ao salvar key no Firebase:", error);
+        res.status(500).json({ success: false, message: 'Erro interno ao gerar a chave.' });
+    }
 });
 
 // Rota 3: Testar/Resgatar a key
@@ -135,3 +147,5 @@ app.listen(PORT, () => {
     =========================================
     `);
 });
+
+module.exports = app;

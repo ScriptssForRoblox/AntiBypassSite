@@ -47,9 +47,10 @@ async function startCheckpoint() {
     try {
         console.log("Iniciando checkpoint e redirecionando para anúncios...");
         
-        // Se o backend estiver no Render, use a URL do Render aqui:
-        const BACKEND_URL = "https://seu-app-no-render.onrender.com";
-        const response = await fetch(`${BACKEND_URL}/api/start-checkpoint`, { method: 'POST' });
+        const response = await fetch('/api/start-checkpoint', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
         
         if (response.ok) {
             // AQUI É ONDE VOCÊ GANHA DINHEIRO:
