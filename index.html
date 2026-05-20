@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkpoint Inicial</title>
+    <!-- Ícone da Aba (Favicon) - Usando um ícone de escudo como exemplo -->
+    <link rel="icon" type="image/svg+xml" href="https://api.iconify.design/material-symbols:shield-lock-outline.svg?color=%2300aaff">
+    <!-- Font Awesome para ícones modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00aaff; /* Troque aqui para mudar a cor do site todo */
+            --bg-dark: #0a0a0c;
+            --card-bg: #16161e;
+        }
+        body { 
+            font-family: 'Inter', 'Segoe UI', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; background: var(--bg-dark); color: white; margin: 0; 
+        }
+        .container { 
+            text-align: center; padding: 50px; background: var(--card-bg); 
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 400px;
+            width: 90%;
+        }
+        .logo-icon {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(0, 170, 255, 0.3));
+        }
+        h1 { color: white; font-size: 24px; margin-bottom: 10px; }
+        p { color: #888; font-size: 14px; line-height: 1.6; }
+        button { 
+            background: var(--primary-color); border: none; padding: 16px 32px; 
+            color: white; font-weight: 700; border-radius: 12px; 
+            cursor: pointer; font-size: 14px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%; text-transform: uppercase; letter-spacing: 1.5px;
+            margin-top: 20px;
+        }
+        button:hover { 
+            background: #0088cc; 
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.4);
+        }
+        .footer-note {
+            margin-top: 25px;
+            font-size: 11px;
+            color: #444;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-icon">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+        <h1>Bem-vindo!</h1>
+        <p>Clique no botão abaixo para validar seu acesso e gerar sua key.</p>
+        <button onclick="startCheckpoint()"><i class="fas fa-check-circle"></i> VALIDAR ACESSO</button>
+        <div class="footer-note">Sistema de Proteção Anti-Bypass</div>
+    </div>
+
+    <script>
+        async function startCheckpoint() {
+            try {
+                await fetch('/api/start-checkpoint', { method: 'POST' });
+                window.location.href = "Untitled-1.html";
+            } catch (e) {
+                alert("Erro ao conectar com o servidor.");
+            }
+        }
+    </script>
+</body>
+</html>
