@@ -4,19 +4,16 @@ async function startCheckpoint() {
         return;
     }
     try {
-        // Simulando a ida para um encurtador com anúncios
-        const adUrl = "https://linkvertise.com/seulink-aqui"; // Coloque seu link de anúncios aqui
+        console.log("Iniciando checkpoint e redirecionando para anúncios...");
         
-        alert("Para obter a key, você passará por uma página de anúncios. Aguarde!");
+        const response = await fetch('/api/start-checkpoint', { method: 'POST' });
         
-        // Em um sistema real, você redirecionaria para o encurtador.
-        // O encurtador, ao final, mandaria o usuário para a página de geração.
-        
-        await fetch('/api/start-checkpoint', { method: 'POST' });
-        
-        // Simula o redirecionamento após passar pelo "anúncio"
-        window.location.href = "generator.html";
-        
+        if (response.ok) {
+            // Simulação de redirecionamento para encurtador
+            // Em um cenário real, aqui seria: window.location.href = "https://linkvertise.com/..."
+            alert("Você será redirecionado para os anúncios agora.");
+            window.location.href = "generator.html";
+        }
     } catch (e) {
         alert("Erro ao conectar com o servidor.");
     }
