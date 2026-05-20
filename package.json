@@ -2,9 +2,9 @@
   "name": "antibypasser-site",
   "version": "1.0.0",
   "description": "Site com sistema de checkpoint e key segura",
-  "main": "server.js",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
